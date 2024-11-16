@@ -1,0 +1,146 @@
+1. TOTAL UNITS SOLD BY STORE LOCATION
+--------------------------------------------------------
+SELECT 
+    s.state AS store_location, 
+    SUM(sa.quantity) AS total_units_sold 
+FROM 
+    global_electronics_sales sa
+JOIN 
+    global_electronics_stores s ON sa.store_key = s.store_key
+GROUP BY 
+    s.state
+ORDER BY 
+    total_units_sold DESC;
+
+
+2. TOTAL UNITS SOLD BY CATEGORY AND SUB-CATEGORY
+--------------------------------------------------------
+SELECT 
+    p.category, 
+    p.sub_category, 
+    SUM(sa.quantity) AS total_units_sold 
+FROM 
+    global_electronics_sales sa
+JOIN 
+    global_electronics_products p ON sa.product_key = p.product_key
+GROUP BY 
+    p.category, p.sub_category
+ORDER BY 
+    total_units_sold DESC;
+
+
+3. TOTAL REVENUE BY PRODUCT NAME
+--------------------------------------------------------
+SELECT 
+    p.product_name, 
+    SUM(sa.quantity * sa.unit_price) AS total_revenue 
+FROM 
+    global_electronics_sales sa
+JOIN 
+    global_electronics_products p ON sa.product_key = p.product_key
+GROUP BY 
+    p.product_name
+ORDER BY 
+    total_revenue DESC;
+
+
+4. DISTRIBUTION BY GENDER (SALES AND REVENUE)
+--------------------------------------------------------
+SELECT 
+    c.gender, 
+    COUNT(DISTINCT sa.order_number) AS total_items_sold, 
+    SUM(sa.quantity * sa.unit_price) AS total_revenue 
+FROM 
+    global_electronics_sales sa
+JOIN 
+    global_electronics_customers c ON sa.customer_key = c.customer_key
+GROUP BY 
+    c.gender;
+
+
+5. PROFIT GAINED BY CATEGORY
+--------------------------------------------------------
+SELECT 
+    p.category, 
+    SUM(sa.quantity * (sa.unit_price - sa.unit_cost)) AS total_profit 
+FROM 
+    global_electronics_sales sa
+JOIN 
+    global_electronics_products p ON sa.product_key = p.product_key
+GROUP BY 
+    p.category
+ORDER BY 
+    total_profit DESC;
+
+
+6. CUSTOMER DISTRIBUTION BY STATE AND COUNTRY
+--------------------------------------------------------
+SELECT 
+    c.state, 
+    c.country, 
+    COUNT(DISTINCT c.customer_key) AS customer_count 
+FROM 
+    global_electronics_customers c
+GROUP BY 
+    c.state, c.country
+ORDER BY 
+    customer_count DESC;
+
+
+7. NEW CUSTOMER ACQUISITION BY YEAR & MONTH
+--------------------------------------------------------
+SELECT 
+    EXTRACT(YEAR FROM c.birthday) AS year, 
+    EXTRACT(MONTH FROM c.birthday) AS month, 
+    COUNT(DISTINCT c.customer_key) AS new_customers 
+FROM 
+    global_electronics_customers c
+GROUP BY 
+    year, month
+ORDER BY 
+    year DESC, month ASC;
+
+
+8. PROFIT BY AGE GROUP
+--------------------------------------------------------
+SELECT 
+    c.age, 
+    c.gender, 
+    SUM(sa.quantity * (sa.unit_price - sa.unit_cost)) AS profit 
+FROM 
+    global_electronics_sales sa
+JOIN 
+    global_electronics_customers c ON sa.customer_key = c.customer_key
+GROUP BY 
+    c.age, c.gender
+ORDER BY 
+    c.age ASC;
+
+
+9. TOP PERFORMANCE BY BRANDS
+--------------------------------------------------------
+SELECT 
+    p.brand, 
+    SUM(sa.quantity) AS total_quantity_sold 
+FROM 
+    global_electronics_sales sa
+JOIN 
+    global_electronics_products p ON sa.product_key = p.product_key
+GROUP BY 
+    p.brand
+ORDER BY 
+    total_quantity_sold DESC;
+
+
+10. DAILY CURRENCY FLUCTUATIONS
+--------------------------------------------------------
+SELECT 
+    e.date, 
+    e.currency, 
+    AVG(e.price) AS average_price 
+FROM 
+    global_electronics_exchange_rates e
+GROUP BY 
+    e.date, e.currency
+ORDER BY 
+    e.date ASC;
